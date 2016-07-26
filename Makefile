@@ -1,12 +1,15 @@
-mySpace.zip:	mySpace.py iot.py
-		zip mySpace.zip mySPace.py iot.py
+MODULE = mySpace
+SRC = $(MODULE).py iot.py
 
-install:	mySpace.zip
+mySpace.zip:	$(SRC)
+		zip $(MODULE).zip $(SRC)
+
+install:	$(MODULE).zip
 		rm -f *~
-		git add Makefile *.py *.zip
+		git add Makefile $(SRC) $(MODULE).zip
 		git commit -m "latest changes"
 		git push -u origin master
 
 clean:		
-		rm -f mySpace.zip
+		rm -f $(MODULE).zip
 		rm -f *~
