@@ -102,7 +102,7 @@ def deal_with_API_request(event, state_table):
 list installed services, install new services, and delete services that are no 
 longer desired.
 """
-def test(event, context):
+def mySpace(event, context):
     # test to see if called via API
     if 'resource_path' in event:
         return deal_with_API_request(event, context.function_name)
