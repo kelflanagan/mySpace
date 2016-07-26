@@ -6,3 +6,7 @@ install:	mySpace.zip
 		git add Makefile *.py *.zip
 		git commit -m "latest changes"
 		git push -u origin master
+
+clean:		
+		rm -f mySpace.zip
+		rm -f *~
