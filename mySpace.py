@@ -19,8 +19,6 @@ def deal_with_API_request(event, state_table):
                 "next" : "who knows"
                 }
             return obj
-    # should never get here
-    raise Exception('MethodNotAllowed')
 """            
     if event['http_method'] == 'PUT':
         if event['resource_path'] == '/desired_temperature':
@@ -45,9 +43,9 @@ def deal_with_API_request(event, state_table):
             return    
         else:
             raise Exception('NotFound')
-    
+"""    
     if event['http_method'] == 'POST':
-        if event['resource_path'] == '/desired_temperature':
+        if event['resource_path'] == '/':
             # get state
             state = get_service_state(state_table)
             if state == None:
@@ -69,7 +67,9 @@ def deal_with_API_request(event, state_table):
             return    
         else:
             raise Exception('NotFound')
-    
+    # should never get here
+    raise Exception('MethodNotAllowed')
+"""    
     if event['http_method'] == 'DELETE':
         if event['resource_path'] == '/desired_temperature':
             # get state
