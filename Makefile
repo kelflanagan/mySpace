@@ -4,7 +4,7 @@ SRC = $(MODULE).py iot.py
 mySpace.zip:	$(SRC)
 		zip $(MODULE).zip $(SRC)
 
-install:	$(MODULE).zip
+commit:		$(MODULE).zip
 		rm -f *~
 		git add Makefile $(SRC) $(MODULE).zip
 		git commit -m "latest changes"
