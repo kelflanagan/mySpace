@@ -19,31 +19,7 @@ def deal_with_API_request(event, state_table):
                 "next" : "who knows"
                 }
             return obj
-"""            
-    if event['http_method'] == 'PUT':
-        if event['resource_path'] == '/desired_temperature':
-            # get state
-            state = get_service_state(state_table)
-            if state == None:
-                raise Exception('Server Error')
 
-            dts = json.loads(state['desired_temperatures'])
-            for item in dts:
-                if item in event:
-                    dts[item] = event[item]
-            
-            valid = update_service_state(
-                state_table, 
-                'desired_temperatures', 
-                json.dumps(dts), 
-                'S'
-                )        
-            if not valid:
-                raise Exception('Server Error')
-            return    
-        else:
-            raise Exception('NotFound')
-"""    
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
             # get state
@@ -69,6 +45,31 @@ def deal_with_API_request(event, state_table):
             raise Exception('NotFound')
     # should never get here
     raise Exception('MethodNotAllowed')
+"""            
+    if event['http_method'] == 'PUT':
+        if event['resource_path'] == '/desired_temperature':
+            # get state
+            state = get_service_state(state_table)
+            if state == None:
+                raise Exception('Server Error')
+
+            dts = json.loads(state['desired_temperatures'])
+            for item in dts:
+                if item in event:
+                    dts[item] = event[item]
+            
+            valid = update_service_state(
+                state_table, 
+                'desired_temperatures', 
+                json.dumps(dts), 
+                'S'
+                )        
+            if not valid:
+                raise Exception('Server Error')
+            return    
+        else:
+            raise Exception('NotFound')
+"""    
 """    
     if event['http_method'] == 'DELETE':
         if event['resource_path'] == '/desired_temperature':
