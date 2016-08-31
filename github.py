@@ -57,8 +57,4 @@ def get_zipfile(filename, repo, repo_owner):
     if response.status != 200:
         return False, response.status
     
-#    ghobj = json.loads(response.read())
-    # decode content field of returned object
-#    zip_file = base64.b64decode(ghobj['content'])
-
     return True, response.read()
