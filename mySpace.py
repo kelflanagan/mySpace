@@ -22,25 +22,20 @@ def deal_with_API_request(event, state_table):
 
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
-            # get state
-            state = get_service_state(state_table)
-            if state == None:
+            # collect information from payload
+            if 'github_user' in event:
+                github_user = event['github_user']
+            else:
                 raise Exception('Server Error')
-
-            dts = json.loads(state['desired_temperatures'])
-            for item in event:
-                if item != 'resource_path' and item != 'http_method':
-                    dts[item] = event[item]
-
-            valid = update_service_state(
-                state_table, 
-                'desired_temperatures', 
-                json.dumps(dts), 
-                'S'
-                )        
-            if not valid:
+            if 'github_repo' in event:
+                github_repo = event['github_repo']
+            else:
                 raise Exception('Server Error')
-            return    
+            if 'service_name' in event:
+                service_name = event['service_name']
+            else:
+                raise Exception('Server Error')
+            return 'made it here'
         else:
             raise Exception('NotFound')
     # should never get here
