@@ -1,9 +1,10 @@
 from __future__ import print_function
 
-import string
-import json
 import boto3
+import github
 import httplib
+import json
+import string
 import time
 import urllib
 
@@ -36,7 +37,15 @@ def deal_with_API_request(event, state_table):
             else:
                 raise Exception('Server')
 
-            return service
+            # get files from repo
+            # get service config file
+            service_cfg = github.get_zipfile(
+                servie['name'] + '.cfg', 
+                service['repo'], 
+                service['owner']
+                )
+            
+            return service_cfg
         else:
             raise Exception('NotFound')
     # should never get here
