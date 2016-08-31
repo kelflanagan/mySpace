@@ -44,9 +44,8 @@ def deal_with_API_request(event, state_table):
                 service['repo'], 
                 service['owner']
                 )
-            config_json = json.loads(service_cfg)
             
-            return config_json
+            return service_cfg
         else:
             raise Exception('NotFound')
     # should never get here
