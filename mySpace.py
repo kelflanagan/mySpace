@@ -22,10 +22,7 @@ def deal_with_API_request(event, state_table):
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
             # collect information from payload
-            obj = {
-                "test" : "made it to POST",
-                "next" : "returning"
-                }
+            obj = event
             return obj
         else:
             raise Exception('NotFound')
