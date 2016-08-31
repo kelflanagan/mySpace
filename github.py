@@ -38,7 +38,7 @@ parameters: filename on github repo is the repository name on
 github repo_owner is the owner of the repo
 returns: file obtained
 """
-def get_zipfile(filename, repo, repo_owner):
+def get_file(filename, repo, repo_owner):
     # form call components and make google call
     host = 'api.github.com'
     body = ''
