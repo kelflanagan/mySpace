@@ -11,6 +11,7 @@ import urllib
 the services state table.
 """
 def deal_with_API_request(event, state_table):
+    service = {}
     if event['http_method'] == 'GET': 
         if event['resource_path'] == '/':
             obj = {
@@ -22,8 +23,20 @@ def deal_with_API_request(event, state_table):
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
             # collect information from payload
-            obj = event
-            return obj
+            if 'service_name' in event:
+                service['name'] = event['service_name']
+            else:
+                raise Exception('Server')
+            if 'github_service_repo_owner' in event:
+                service['owner'] = event['github_service_repo_owner']
+            else:
+                raise Exception('Server')
+            if 'github_service_repo' in event:
+                service['repo'] = event['github_service_repo']
+            else:
+                raise Exception('Server')
+
+            return service
         else:
             raise Exception('NotFound')
     # should never get here
