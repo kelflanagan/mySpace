@@ -1,5 +1,5 @@
 MODULE = mySpace
-SRC = $(MODULE).py iot.py
+SRC = $(MODULE).py
 m=latest incremental changes
 
 $(MODULE).zip:	$(SRC)
