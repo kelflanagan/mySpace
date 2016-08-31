@@ -44,8 +44,12 @@ def deal_with_API_request(event, state_table):
                 service['repo'], 
                 service['owner']
                 )
-            
-            return service_cfg
+
+            if service_cfg[0] == 'true':
+                return service_cfg[1]
+            else:
+                raise Exception('Server')
+
         else:
             raise Exception('NotFound')
     # should never get here
