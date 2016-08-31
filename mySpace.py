@@ -40,7 +40,7 @@ def deal_with_API_request(event, state_table):
             # get files from repo
             # get service config file
             service_cfg = github.get_zipfile(
-                servie['name'] + '.cfg', 
+                service['name'] + '.cfg', 
                 service['repo'], 
                 service['owner']
                 )
