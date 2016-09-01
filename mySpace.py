@@ -70,6 +70,8 @@ def deal_with_API_request(event, state_table):
             if not success:
                 raise Exception('Server')
 
+            return
+
         else:
             raise Exception('NotFound')
     # should never get here
