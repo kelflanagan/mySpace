@@ -10,8 +10,8 @@ import urllib
 
 
 def build_aws_services(cfg):
-    info = {}
-    info = cfg
+
+    info = cfg.keys()
     return True, info
 
 
