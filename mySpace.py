@@ -39,14 +39,16 @@ def deal_with_API_request(event, state_table):
 
             # get files from repo
             # get service config file
-            service_cfg = github.get_zipfile(
+            success, service_cfg = github.get_zipfile(
                 service['name'] + '.cfg', 
                 service['repo'], 
                 service['owner']
                 )
-
-            return service_cfg
-
+            
+            if success:
+                return service_cfg
+            else:
+                raise Exception('Server')
         else:
             raise Exception('NotFound')
     # should never get here
