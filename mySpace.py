@@ -54,7 +54,8 @@ def deal_with_API_request(event, state_table):
                 service['owner']
                 )
             if success:
-                return service_api
+                api = json.loads(service_api)
+                return api
             else:
                 raise Exception('Server')
         else:
