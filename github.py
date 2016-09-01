@@ -59,4 +59,4 @@ def get_file(filename, repo, repo_owner):
     
     ghobj = json.loads(response.read())
 
-    return True, ghobj['content']
+    return True, response.read()
