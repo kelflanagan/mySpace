@@ -44,8 +44,12 @@ def deal_with_API_request(event, state_table):
                 service['repo'], 
                 service['owner']
                 )
-            if not success:
+            if success:
+                cfg = json.loads(service_cfg)
+                return cfg
+            else:
                 raise Exception('Server')
+
 
             # API file
             success, service_api = github.get_zipfile(
@@ -55,7 +59,6 @@ def deal_with_API_request(event, state_table):
                 )
             if success:
                 api = json.loads(service_api)
-                return api
             else:
                 raise Exception('Server')
         else:
