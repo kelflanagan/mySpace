@@ -8,6 +8,13 @@ import string
 import time
 import urllib
 
+
+def build_aws_services(cfg):
+    info = {}
+    info = cfg
+    return True, info
+
+
 """ deal_with_API_request receives the calling event dictionary and the name of
 the services state table.
 """
@@ -23,9 +30,9 @@ def deal_with_API_request(event, state_table):
 
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
+            # reject requests with the incorrect payload
             if len(event.keys()) != 5:
                 raise Exception('Server')
-
             # collect information from payload
             if 'service_name' in event:
                 service['name'] = event['service_name']
@@ -73,7 +80,11 @@ def deal_with_API_request(event, state_table):
             if not success:
                 raise Exception('Server')
 
-            return
+            success, service_info =  build_aws_services(cfg)
+            if not success:
+                raise Exception('Server')
+                
+            return service_info
 
         else:
             raise Exception('NotFound')
