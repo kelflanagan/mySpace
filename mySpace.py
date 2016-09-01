@@ -45,8 +45,8 @@ def deal_with_API_request(event, state_table):
                 service['owner']
                 )
             if success:
-#                cfg = json.loads(service_cfg)
-                return service_cfg
+                cfg = json.loads(service_cfg)
+                return cfg
             else:
                 raise Exception('Server')
 
