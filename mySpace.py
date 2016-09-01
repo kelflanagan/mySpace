@@ -49,7 +49,7 @@ def deal_with_API_request(event, state_table):
 
             # API file
             success, service_api = github.get_zipfile(
-                service['name'] + '.cfg', 
+                service['name'] + '.api', 
                 service['repo'], 
                 service['owner']
                 )
