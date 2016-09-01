@@ -58,6 +58,5 @@ def get_file(filename, repo, repo_owner):
         return False, response.status
     
     ghobj = json.loads(response.read())
-    zip_file = base64.b64decode(ghobj['content'])
 
     return True, ghobj['content']
