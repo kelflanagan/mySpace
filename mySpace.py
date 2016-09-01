@@ -46,7 +46,6 @@ def deal_with_API_request(event, state_table):
                 )
             if success:
                 cfg = json.loads(service_cfg)
-                return cfg
             else:
                 raise Exception('Server')
 
@@ -61,6 +60,16 @@ def deal_with_API_request(event, state_table):
                 api = json.loads(service_api)
             else:
                 raise Exception('Server')
+
+            # lambda file
+            success, service_lambda = github.get_zipfile(
+                service['name'] + '.zip', 
+                service['repo'], 
+                service['owner']
+                )
+            if not success:
+                raise Exception('Server')
+
         else:
             raise Exception('NotFound')
     # should never get here
