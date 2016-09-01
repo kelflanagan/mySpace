@@ -23,6 +23,9 @@ def deal_with_API_request(event, state_table):
 
     if event['http_method'] == 'POST':
         if event['resource_path'] == '/':
+            if len(event.keys()) != 5:
+                raise Exception('Server')
+
             # collect information from payload
             if 'service_name' in event:
                 service['name'] = event['service_name']
