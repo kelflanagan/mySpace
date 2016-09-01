@@ -57,6 +57,6 @@ def get_file(filename, repo, repo_owner):
     if response.status != 200:
         return False, response.status
     
-    ghobj = json.loads(response.read())
+#    ghobj = json.loads(response.read())
 
     return True, response.read()
