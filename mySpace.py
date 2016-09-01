@@ -45,7 +45,7 @@ def deal_with_API_request(event, state_table):
                 service['owner']
                 )
 
-            return service
+            return service_cfg
 
         else:
             raise Exception('NotFound')
