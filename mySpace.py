@@ -36,7 +36,7 @@ def install_aws_services(cfg, api_name):
 #        success = install_dynamodb_services(cfg['aws_services']['dynamodb'])
 #    if 'lambda' in services_to_install:
 #        success = install_lambda_services(cfg['aws_services']['dynamodb'])
-
+#
     return True, info
 
 
