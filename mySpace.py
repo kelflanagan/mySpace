@@ -17,7 +17,11 @@ parameters: topics, SNS topics to create
 returns: dictionary of SNS topic screen names and ARNs
 """
 def install_sns_services(topics, api_name):
-    return {'test' : 'test2'}
+    topic_list = {}
+    for topic in topics:
+        topic_list['topic_name'] = topic['topic_name']
+        topic_list['display_name'] = topic['display_name']
+    return topic_list
 
 
 def install_aws_services(cfg, api_name):
