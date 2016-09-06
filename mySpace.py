@@ -36,7 +36,7 @@ def install_aws_services(cfg, api_name):
 #    if 'lambda' in services_to_install:
 #        success = install_lambda_services(cfg['aws_services']['dynamodb'])
 
-    return True, info
+    return True, sns_topics
 
 
 """ service_GET_request() service the http GET method for the root resource
