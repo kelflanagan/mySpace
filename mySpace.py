@@ -33,7 +33,7 @@ parameters: event which contains the passed parameters if any.
 returns: True for success and False for failure. A service is installed as a
 result of the call.
 """
-def deal_with_API_request(event):
+def service_POST_request(event):
     service = {}
     # reject requests with the incorrect payload
     if len(event.keys()) != 5:
@@ -100,9 +100,9 @@ def mySpace(event, context):
     if 'resource_path' in event:
         if event['resource_path'] == '/':
             if event['http_method'] == 'GET':
-                return service_get_request(event)
+                return service_GET_request(event)
             elif event['http_method'] == 'POST':
-                return service_get_request(event)
+                return service_POST_request(event)
             else:
                 raise Exception('MethodNotAllowed')
         else:
