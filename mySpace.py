@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import aws
 import boto3
 import github
 import httplib
