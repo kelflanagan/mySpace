@@ -9,18 +9,19 @@ import time
 import urllib
 
 
-def build_aws_services(cfg):
-    info = {}
-    service_name = cfg['name']
+def install_aws_services(cfg, api_name):
+    info = []
+    info.append(cfg['aws_services'].keys())
     
     return True, info
 
 
 """ service_GET_request() service the http GET method for the root resource
 parameters: event which contains the passed parameters if any.
+            api_name
 returns: a list of all installed services
 """
-def service_GET_request(event):
+def service_GET_request(event, api_name):
     obj = {
         "test" : "we made it new",
         "next" : "who knows"
@@ -30,11 +31,13 @@ def service_GET_request(event):
 
 """ service_POST_request servies the http POST method on the root resource.
 parameters: event which contains the passed parameters if any.
+            api_name
 returns: True for success and False for failure. A service is installed as a
 result of the call.
 """
-def service_POST_request(event):
+def service_POST_request(event, api_name):
     service = {}
+    service_info = []
     # reject requests with the incorrect payload
     if len(event.keys()) != 5:
         raise Exception('Server')
@@ -84,11 +87,11 @@ def service_POST_request(event):
     if not success:
         raise Exception('Server')
 
-    success, service_info =  build_aws_services(cfg)
+    success, service_info =  install_aws_services(cfg, api_name)
     if not success:
         raise Exception('Server')
     
-    return cfg
+    return service_info
 
 
 """ mySpace() is installed when a new mySpace is created. It is them used to
@@ -100,9 +103,9 @@ def mySpace(event, context):
     if 'resource_path' in event:
         if event['resource_path'] == '/':
             if event['http_method'] == 'GET':
-                return service_GET_request(event)
+                return service_GET_request(event, context.function_name)
             elif event['http_method'] == 'POST':
-                return service_POST_request(event)
+                return service_POST_request(event, context.function_name)
             else:
                 raise Exception('MethodNotAllowed')
         else:
