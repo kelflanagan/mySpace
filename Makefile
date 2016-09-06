@@ -1,5 +1,5 @@
 MODULE = mySpace
-SRC = $(MODULE).py github.py
+SRC = $(MODULE).py github.py aws.py
 m=latest incremental changes
 
 $(MODULE).zip:	$(SRC)

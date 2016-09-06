@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import aws
 import boto3
 import github
 import httplib
@@ -9,10 +10,33 @@ import time
 import urllib
 
 
+""" install_sns_services() installs an SNS topic for each topic listed in the 
+input paramter. Each topic is namespaced with the api_name as a prefix.
+If topic exists it is not recreated, but included in return
+parameters: topics, SNS topics to create
+returns: dictionary of SNS topic screen names and ARNs
+"""
+def install_sns_services(topics, api_name):
+    return {'test' : 'test2'}
+
 def install_aws_services(cfg, api_name):
-    info = []
-    info.append(cfg['aws_services'].keys())
-    
+    info = {}
+    sns_topics = {}
+
+    if 'aws_services' not in cfg:
+        False, None
+    services_to_install = cfg['aws_services'].keys()
+
+    # perform tasks for each service and deal with lambda function last
+    if 'sns' in services_to_install:
+        sns_topics = install_sns_services(cfg['aws_services']['sns'], api_name)
+#    if 'ses' in services_to_install:
+#        success = install_ses_services(cfg['aws_services']['ses'])
+#    if 'dynamodb' in services_to_install:
+#        success = install_dynamodb_services(cfg['aws_services']['dynamodb'])
+#    if 'lambda' in services_to_install:
+#        success = install_lambda_services(cfg['aws_services']['dynamodb'])
+
     return True, info
 
 
@@ -37,7 +61,7 @@ result of the call.
 """
 def service_POST_request(event, api_name):
     service = {}
-    service_info = []
+    service_info = {}
     # reject requests with the incorrect payload
     if len(event.keys()) != 5:
         raise Exception('Server')
