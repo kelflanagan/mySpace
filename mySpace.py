@@ -88,7 +88,7 @@ def service_POST_request(event):
     if not success:
         raise Exception('Server')
     
-    return service_info
+    return cfg
 
 
 """ mySpace() is installed when a new mySpace is created. It is them used to
