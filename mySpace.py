@@ -42,13 +42,13 @@ parameters: tables (an array of JSON objects) to be created
 returns: list of dbs created
 """
 def install_dynamodb_services(tables, api_name):
+    # get list of tables
+    table_list = aws.list_dynamodb_tables()
+    if table_list == None:
+        return False, None
+
     # iterate through tables to create
     for table in tables:
-        # check if table exists
-        table_list = aws.list_dynamodb_tables()
-        if table_list == None:
-            return False, None
-
         # namespace table
         table_name = (
             api_name + 
@@ -59,15 +59,15 @@ def install_dynamodb_services(tables, api_name):
         if table_name not in table_list:
             # create table
             table_arn = aws.create_dynamodb_table(
-                api_name + '_' + table['table_name'],
+                table_name,
                 table['primary_key']
                 )
             if table_arn == None:
                 return False, None
 
+            return True, table['table_items']
             # add items to table
-            for item in table['table_items']:
-                return True, item
+#            for item in table['table_items']:
 #                success = aws.put_dynamodb_item(
 #                    table_name,
 #                    item['item_name'],
