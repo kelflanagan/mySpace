@@ -18,10 +18,32 @@ returns: dictionary of SNS topic screen names and ARNs
 """
 def install_sns_services(sns_services, api_name):
     topic_list = {}
-    for topic in sns_services['topics']:
-        topic_list['topic_name'] = topic['topic_name']
-        topic_list['display_name'] = topic['display_name']
-    return topic_list
+    # get list of existing topics
+    existing_topics = aws.list_sns_topics()
+    if existing_topics == None:
+        return False, None
+
+    # create SNS topics
+#    for topic in sns_services['topics']:
+        # create namespace topic
+#        topic_name = api_name + topic['topic_name']
+#        display_name = api_name + topic['display_name']
+
+        # check to see if topic exists
+#        if topic_name in existing_topics:
+#            topic_list[topic_name] = existing_topics[topic_name]
+#        else:
+            # doesn't exist, so create it
+#            success, topic_arn = aws.create_sns_topic(
+#                topic_name, 
+#                display_name
+#                )
+#            if success:
+#                topic_list[topic_name] = topic_arn
+#            else:
+#                return False, None
+    
+    return existing_topics
 
 
 def install_aws_services(cfg, api_name):
