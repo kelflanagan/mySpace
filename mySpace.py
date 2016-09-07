@@ -36,6 +36,19 @@ def install_sns_services(sns_services, api_name):
     return True, topic_list
 
 
+""" install_ses_services() validates an email address and enables email to be
+sent to it.
+parameters: dictionary with email address and sms number
+returns: instructions for user to finish the setup
+"""
+def install_ses_services(ses_services, api_name):
+    # verify email address
+    if aws.verify_email_address(ses_services['email_address']):
+        return True, {'userMessage' : 'During the next hour you will receive an email to verify the provided email address. Please follow the instructions emailed to the address'}
+    else:
+        return False, None
+
+
 """ install_aws_services() reads through the configuration (cfg) file
 and performs the tasks defined. The api_name is used to namespace items
 parameters: cfg (JSON formatted configuration file and api_name
@@ -53,14 +66,21 @@ def install_aws_services(cfg, api_name):
             )
         if not success:
             return False, None
-#    if 'ses' in services_to_install:
-#        success = install_ses_services(cfg['aws_services']['ses'])
+
+    if 'ses' in services_to_install:
+        success, message = install_ses_services(
+            cfg['aws_services']['ses'],
+            api_name
+            )
+        if not success:
+            return False, None
+
 #    if 'dynamodb' in services_to_install:
 #        success = install_dynamodb_services(cfg['aws_services']['dynamodb'])
 #    if 'lambda' in services_to_install:
 #        success = install_lambda_services(cfg['aws_services']['dynamodb'])
 
-    return True, sns_topics
+    return True, message
 
 
 """ service_GET_request() service the http GET method for the root resource
@@ -142,8 +162,7 @@ def service_POST_request(event, api_name):
 
 
 """ mySpace() is installed when a new mySpace is created. It is them used to
-list installed services, install new services, and delete services that are no 
-longer desired.
+list installed services and install new services.
 """
 def mySpace(event, context):
     # test to see if called via API
