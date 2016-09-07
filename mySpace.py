@@ -14,7 +14,7 @@ import urllib
 input paramter. Each topic is namespaced with the api_name as a prefix.
 If topic exists it is not recreated, but included in return
 parameters: topics, SNS topics to create
-returns: dictionary of SNS topic screen names and ARNs
+returns: dictionary of SNS topic names and ARNs
 """
 def install_sns_services(sns_services, api_name):
     topic_list = {}
@@ -24,26 +24,24 @@ def install_sns_services(sns_services, api_name):
         return False, None
 
     # create SNS topics
-#    for topic in sns_services['topics']:
+    for topic in sns_services['topics']:
         # create namespace topic
-#        topic_name = api_name + topic['topic_name']
-#        display_name = api_name + topic['display_name']
+        topic_name = api_name + topic['topic_name']
 
         # check to see if topic exists
-#        if topic_name in existing_topics:
-#            topic_list[topic_name] = existing_topics[topic_name]
-#        else:
+        if topic_name in existing_topics:
+            topic_list[topic_name] = existing_topics[topic_name]
+        else:
             # doesn't exist, so create it
-#            success, topic_arn = aws.create_sns_topic(
-#                topic_name, 
-#                display_name
-#                )
-#            if success:
-#                topic_list[topic_name] = topic_arn
-#            else:
-#                return False, None
+            success, topic_arn = aws.create_sns_topic(
+                topic_name
+                )
+            if success:
+                topic_list[topic_name] = topic_arn
+            else:
+                return False, None
     
-    return True, existing_topics
+    return True, topic_list
 
 
 def install_aws_services(cfg, api_name):
