@@ -43,7 +43,15 @@ returns: list of dbs created
 """
 def install_dynamodb_services(tables, api_name):
     for table in tables:
-        return True, {'table_name' : table['table_name']}
+        # create table
+        table_arn = aws.create_dynamodb_table(
+            api_name + '_' + table['table_name'],
+            table['primary_key']
+            )
+        if table_arn == None:
+            return False, None
+
+    return True, {'table_arn' : table_arn}
 
 
 """ install_aws_services() reads through the configuration (cfg) file
