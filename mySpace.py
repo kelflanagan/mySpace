@@ -43,19 +43,22 @@ def install_sns_services(sns_services, api_name):
 #            else:
 #                return False, None
     
-    return existing_topics
+    return True, existing_topics
 
 
 def install_aws_services(cfg, api_name):
-    info = {}
-
     if 'aws_services' not in cfg:
         False, None
     services_to_install = cfg['aws_services'].keys()
 
     # perform tasks for each service and deal with lambda function last
     if 'sns' in services_to_install:
-        sns_topics = install_sns_services(cfg['aws_services']['sns'], api_name)
+        success, sns_topics = install_sns_services(
+            cfg['aws_services']['sns'], 
+            api_name
+            )
+        if not success:
+            return False, None
 #    if 'ses' in services_to_install:
 #        success = install_ses_services(cfg['aws_services']['ses'])
 #    if 'dynamodb' in services_to_install:
