@@ -16,15 +16,13 @@ If topic exists it is not recreated, but included in return
 parameters: topics, SNS topics to create
 returns: dictionary of SNS topic screen names and ARNs
 """
-def install_sns_services(topics, api_name):
-    topic_list = {}
-    for topic_num in topics:
-        return topic_num
+def install_sns_services(sns_services, api_name):
+    topic_list = sns_services['topics']
+    return topic_list
 
 
 def install_aws_services(cfg, api_name):
     info = {}
-    sns_topics = {}
 
     if 'aws_services' not in cfg:
         False, None
