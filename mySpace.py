@@ -67,20 +67,21 @@ def install_dynamodb_services(tables, api_name):
 
             # add items to table
             for item in table['table_items']:
-                success = aws.put_dynamodb_item(
-                    table_name,
-                    item['item_name'],
-                    item['item_type'],
-                    item['item_value']
-                    )
-                if not success:
-                    return False, None
+                return True, item
+#                success = aws.put_dynamodb_item(
+#                    table_name,
+#                    item['item_name'],
+#                    item['item_type'],
+#                    item['item_value']
+#                    )
+#                if not success:
+#                    return False, None
         else:
             table_arn = aws.get_dynamodb_table_arn(table_name)
             if table_arn == None:
                 return False, None
-            
-    return True, {'table_arn' : table_arn}
+#            
+#    return True, {'table_arn' : table_arn}
 
 
 """ install_aws_services() reads through the configuration (cfg) file
