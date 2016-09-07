@@ -68,7 +68,7 @@ def install_dynamodb_services(tables, api_name):
             # add items to table
             for item in table['table_items']:
                 success = aws.put_dynamodb_item(
-                    table['table_name'],
+                    table_name,
                     item['item_name'],
                     item['item_type'],
                     item['item_value']
