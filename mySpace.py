@@ -36,6 +36,10 @@ def install_sns_services(sns_services, api_name):
     return True, topic_list
 
 
+""" install_aws_services() reads through the configuration (cfg) file
+and performs the tasks defined. The api_name is used to namespace items
+parameters: cfg (JSON formatted configuration file and api_name
+"""
 def install_aws_services(cfg, api_name):
     if 'aws_services' not in cfg:
         False, None
