@@ -37,12 +37,12 @@ def install_sns_services(sns_services, api_name):
 
 
 """ install_dynamodb_services() installs database tables
-parameters: tables to be created
+parameters: tables (an array of JSON objects) to be created
             api_name
 returns: list of dbs created
 """
-def install_dynamodb_services(db_tables, api_name):
-    for table in db_tables['tables']:
+def install_dynamodb_services(tables, api_name):
+    for table in tables:
         return True, {'table_name' : table['table_name']}
 
 
@@ -66,7 +66,7 @@ def install_aws_services(cfg, api_name):
 
     if 'dynamodb' in services_to_install:
         success, db_list = install_dynamodb_services(
-            cfg['aws_services']['dynamodb'], 
+            cfg['aws_services']['dynamodb']['tables'], 
             api_name
             )
         if not success:
