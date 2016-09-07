@@ -36,17 +36,14 @@ def install_sns_services(sns_services, api_name):
     return True, topic_list
 
 
-""" install_ses_services() validates an email address and enables email to be
-sent to it.
-parameters: dictionary with email address and sms number
-returns: instructions for user to finish the setup
+""" install_dynamodb_services() installs database tables
+parameters: tables to be created
+            api_name
+returns: list of dbs created
 """
-def install_ses_services(ses_services, api_name):
-    # verify email address
-    if aws.verify_email_address(ses_services['email_address']):
-        return True, {'userMessage' : 'During the next hour you will receive an email to verify the provided email address. Please follow the instructions emailed to the address'}
-    else:
-        return False, None
+def install_dynamodb_services(tables, api_name):
+    for table in tables:
+        return True, {'table_name' : table['table_name']}
 
 
 """ install_aws_services() reads through the configuration (cfg) file
@@ -67,20 +64,19 @@ def install_aws_services(cfg, api_name):
         if not success:
             return False, None
 
-    if 'ses' in services_to_install:
-        success, message = install_ses_services(
-            cfg['aws_services']['ses'],
+    if 'dynamodb' in services_to_install:
+        success, db_list = install_dynamodb_services(
+            cfg['aws_services']['dynamodb'], 
             api_name
             )
         if not success:
             return False, None
 
-#    if 'dynamodb' in services_to_install:
 #        success = install_dynamodb_services(cfg['aws_services']['dynamodb'])
 #    if 'lambda' in services_to_install:
 #        success = install_lambda_services(cfg['aws_services']['dynamodb'])
 
-    return True, message
+    return True, db_list
 
 
 """ service_GET_request() service the http GET method for the root resource
