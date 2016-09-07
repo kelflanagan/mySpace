@@ -17,6 +17,7 @@ parameters: topics, SNS topics to create
 returns: dictionary of SNS topic screen names and ARNs
 """
 def install_sns_services(sns_services, api_name):
+    topic_list = {}
     for topic in sns_services['topics']:
         topic_list['topic_name'] = topic['topic_name']
         topic_list['display_name'] = topic['display_name']
