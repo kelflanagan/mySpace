@@ -26,7 +26,11 @@ def install_sns_services(sns_services, api_name):
     # create SNS topics
     for topic in sns_services['topics']:
         # create namespace topic
-        topic_name = api_name + topic['topic_name']
+        topic_name = (
+            api_name
+            + '_'
+            + topic['topic_name']
+            )
 
         # check to see if topic exists
         if topic_name in existing_topics:
