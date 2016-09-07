@@ -41,8 +41,8 @@ parameters: tables to be created
             api_name
 returns: list of dbs created
 """
-def install_dynamodb_services(tables, api_name):
-    for table in tables:
+def install_dynamodb_services(db_tables, api_name):
+    for table in db_tables['tables']:
         return True, {'table_name' : table['table_name']}
 
 
