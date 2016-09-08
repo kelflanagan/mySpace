@@ -75,7 +75,6 @@ def install_dynamodb_services(tables, api_name):
                     )
                 if not success:
                     return False, None
-                return True, item
         else:
             table_arn = aws.get_dynamodb_table_arn(table_name)
             if table_arn == None:
