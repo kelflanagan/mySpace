@@ -69,6 +69,7 @@ def install_dynamodb_services(tables, api_name):
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
                 print(".")
 
+            print("+++++++")
             # add items to table
             for item in table['table_items']:
                 success = aws.put_dynamodb_item(
