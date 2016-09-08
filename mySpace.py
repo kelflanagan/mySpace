@@ -37,9 +37,9 @@ def install_sns_services(sns_services, api_name):
 
 
 """ install_dynamodb_services() installs database tables and associated items
-parameters: tables (an array of JSON objects) describing tables and associated items to be created
+parameters: tables (JSON array describing tables and items to be created)
             api_name (to namespace the table)
-returns: list of dbs created
+returns: list of tables and associated arns created
 """
 def install_dynamodb_services(tables, api_name):
     table_arn_list = {}
@@ -69,7 +69,6 @@ def install_dynamodb_services(tables, api_name):
             # wait for table to be created
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
                 time.sleep(1)
-
 
             # add items to table
             for item in table['table_items']:
