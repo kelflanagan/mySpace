@@ -67,7 +67,6 @@ def install_dynamodb_services(tables, api_name):
 
             # add items to table
             for item in table['table_items']:
-                return True, item
                 success = aws.put_dynamodb_item(
                     table_name,
                     item['item_name'],
@@ -76,6 +75,7 @@ def install_dynamodb_services(tables, api_name):
                     )
                 if not success:
                     return False, None
+                return True, item
         else:
             table_arn = aws.get_dynamodb_table_arn(table_name)
             if table_arn == None:
