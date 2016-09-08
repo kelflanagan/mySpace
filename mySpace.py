@@ -42,6 +42,7 @@ parameters: tables (an array of JSON objects) describing tables and associated i
 returns: list of dbs created
 """
 def install_dynamodb_services(tables, api_name):
+    table_arn_list = {}
     # get list of tables
     table_list = aws.list_dynamodb_tables()
     if table_list == None:
@@ -69,6 +70,7 @@ def install_dynamodb_services(tables, api_name):
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
                 time.sleep(1)
 
+
             # add items to table
             for item in table['table_items']:
                 success = aws.update_dynamodb_item(
@@ -87,7 +89,10 @@ def install_dynamodb_services(tables, api_name):
             if table_arn == None:
                 return False, None
             
-    return True, {'table_arn' : table_arn}
+        # add table to list to return
+        table_arn_list[table_name] = table_arn
+
+    return True, table_arn_list
 
 
 """ install_aws_services() reads through the configuration (cfg) file
