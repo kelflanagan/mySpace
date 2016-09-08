@@ -42,7 +42,6 @@ parameters: tables (an array of JSON objects) to be created
 returns: list of dbs created
 """
 def install_dynamodb_services(tables, api_name):
-    print("Got here")
     # get list of tables
     table_list = aws.list_dynamodb_tables()
     if table_list == None:
@@ -66,6 +65,7 @@ def install_dynamodb_services(tables, api_name):
             if table_arn == None:
                 return False, None
 
+            print("Got here")
             # wait for table to be created
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
                 print(".")
