@@ -76,8 +76,8 @@ def install_dynamodb_services(tables, api_name):
                 success = aws.update_dynamodb_item(
                     table_name,
                     table['primary_key'],
-                    table['primary_key_value'],
                     table['primary_key_type'],
+                    table['primary_key_value'],
                     item['item_name'],
                     item['item_type'],
                     item['item_value']
