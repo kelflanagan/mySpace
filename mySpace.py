@@ -68,7 +68,6 @@ def install_dynamodb_services(tables, api_name):
             # wait for table to be created
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
                 print(".")
-                time.sleep(1)
 
             # add items to table
             for item in table['table_items']:
