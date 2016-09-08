@@ -65,10 +65,9 @@ def install_dynamodb_services(tables, api_name):
             if table_arn == None:
                 return False, None
 
-            print("Got here")
             # wait for table to be created
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
-                print(".")
+                print("Got here")
 
             print("+++++++")
             # add items to table
