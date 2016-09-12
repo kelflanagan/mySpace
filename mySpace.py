@@ -133,6 +133,7 @@ parameters: event which contains the passed parameters if any.
 returns: a list of all installed services
 """
 def service_GET_request(event, api_name):
+    return event
     obj = {
         "test" : "we made it new",
         "next" : "who knows"
