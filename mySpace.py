@@ -94,6 +94,24 @@ def install_dynamodb_services(tables, api_name):
     return True, table_arn_list
 
 
+""" install_lambda_services() installs one or more lambda functions to process
+the needs of the service being installed.
+parameters: 
+returns: 
+"""
+def install_lambda_services(lambda_functions, api_name):
+    # create functions
+    for function in lambda_functions:
+        # create namespace topic
+        function_name = (
+            api_name
+            + '_'
+            + function['function_name']
+            )
+
+    return True, {'name' : function_name }
+
+
 """ install_aws_services() reads through the configuration (cfg) file
 and performs the tasks defined. The api_name is used to namespace items
 parameters: cfg (JSON formatted configuration file and api_name
@@ -120,11 +138,15 @@ def install_aws_services(cfg, api_name):
         if not success:
             return False, None
 
-#        success = install_dynamodb_services(cfg['aws_services']['dynamodb'])
-#    if 'lambda' in services_to_install:
-#        success = install_lambda_services(cfg['aws_services']['dynamodb'])
+    if 'lambda' in services_to_install:
+        success, function_name = install_lambda_services(
+            cfg['aws_services']['lambda']['functions'],
+            api_name
+            )
+        if not success:
+            return False, None
 
-    return True, db_list
+    return True, function_name
 
 
 """ service_GET_request() service the http GET method for the root resource
