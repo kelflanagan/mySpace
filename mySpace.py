@@ -99,9 +99,17 @@ the needs of the service being installed.
 parameters: 
 returns: 
 """
-def install_lambda_services(lambda_functions, api_name):
+def install_lambda_services(lambda_functions, api_name, github):
+    list_of_roles = aws.list_roles()
     # create functions
     for function in lambda_functions:
+        # find arn for lambda execution role
+        role_name = api_name + function['role']
+        if role_name in list_of_roles:
+            role_arn = list_of_roles[role_name]
+        else:
+            return False, None
+
         # create namespace topic
         function_name = (
             api_name
@@ -109,14 +117,35 @@ def install_lambda_services(lambda_functions, api_name):
             + function['function_name']
             )
 
-    return True, {'name' : function_name }
+        # lambda file
+        success, function_code = github.get_zipfile(
+            function['lambda_zip_file'],
+            github['repo'], 
+            github['owner']
+            )
+        if not success:
+            return False, None
+
+        function_arn = aws.create_function(
+            function_name,
+            function['handler'],
+            function['code_language'],
+            role_arn, 
+            function_code, 
+            function['description']
+            )
+        if function_arn == None:
+            return False, None
+            
+    return True, {'arn' : function_arn }
 
 
 """ install_aws_services() reads through the configuration (cfg) file
 and performs the tasks defined. The api_name is used to namespace items
-parameters: cfg (JSON formatted configuration file and api_name
+parameters: cfg (JSON formatted configuration file, api_name, and 
+github (a dictionary with github owner and repo information)
 """
-def install_aws_services(cfg, api_name):
+def install_aws_services(cfg, api_name, github):
     if 'aws_services' not in cfg:
         False, None
     services_to_install = cfg['aws_services'].keys()
@@ -141,7 +170,8 @@ def install_aws_services(cfg, api_name):
     if 'lambda' in services_to_install:
         success, function_name = install_lambda_services(
             cfg['aws_services']['lambda']['functions'],
-            api_name
+            api_name,
+            github
             )
         if not success:
             return False, None
@@ -212,16 +242,8 @@ def service_POST_request(event, api_name):
     else:
         raise Exception('Server')
 
-    # lambda file
-    success, service_lambda = github.get_zipfile(
-        service['name'] + '.zip', 
-        service['repo'], 
-        service['owner']
-        )
-    if not success:
-        raise Exception('Server')
 
-    success, service_info =  install_aws_services(cfg, api_name)
+    success, service_info =  install_aws_services(cfg, api_name, service)
     if not success:
         raise Exception('Server')
     
