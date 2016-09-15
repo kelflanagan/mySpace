@@ -110,6 +110,7 @@ def install_lambda_services(lambda_functions, api_name, github_info):
         else:
             return False, None
 
+        print(role_name)
         # create namespace topic
         function_name = (
             api_name
@@ -117,7 +118,10 @@ def install_lambda_services(lambda_functions, api_name, github_info):
             + function['function_name']
             )
 
+        print(function_name)
         # lambda file
+
+        print("getting code from github")
         success, function_code = github.get_zipfile(
             function['lambda_zip_file'],
             github_info['repo'], 
@@ -125,7 +129,9 @@ def install_lambda_services(lambda_functions, api_name, github_info):
             )
         if not success:
             return False, None
+        print("got code")
 
+        print("creating function")
         function_arn = aws.create_function(
             function_name,
             function['handler'],
