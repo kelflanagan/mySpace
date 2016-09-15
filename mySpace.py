@@ -99,7 +99,7 @@ the needs of the service being installed.
 parameters: 
 returns: 
 """
-def install_lambda_services(lambda_functions, api_name, github):
+def install_lambda_services(lambda_functions, api_name, github_info):
     list_of_roles = aws.list_roles()
     # create functions
     for function in lambda_functions:
@@ -120,8 +120,8 @@ def install_lambda_services(lambda_functions, api_name, github):
         # lambda file
         success, function_code = github.get_zipfile(
             function['lambda_zip_file'],
-            github['repo'], 
-            github['owner']
+            github_info['repo'], 
+            github_info['owner']
             )
         if not success:
             return False, None
