@@ -142,8 +142,18 @@ def install_lambda_services(lambda_functions, api_name, github_info):
             )
         if function_arn == None:
             return False, None
-            
-    return True, {'arn' : function_arn }
+
+        # add triggers if any
+        if 'triggers' in function:
+            for trigger in function['triggers']:
+                topic_arn = aws.subscribe_to_sns_topic(
+                    trigger['topic_name'],
+                    function_arn
+                    )
+                if topic_arn == None:
+                    return False, None
+                    
+    return True, {'arn' : topic_arn }
 
 
 """ install_aws_services() reads through the configuration (cfg) file
