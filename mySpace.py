@@ -99,64 +99,63 @@ the needs of the service being installed.
 parameters: 
 returns: 
 """
-def install_lambda_services(lambda_functions, api_name, github_info):
+def install_lambda_services(function, api_name, github_info):
     list_of_roles = aws.list_roles()
-    # create functions
-    for function in lambda_functions:
-        # find arn for lambda execution role
-        role_name = api_name + function['role']
-        if role_name in list_of_roles:
-            role_arn = list_of_roles[role_name]
-        else:
-            return False, None
 
-        print(role_name)
-        # create namespace topic
-        function_name = (
-            api_name
-            + '_'
-            + function['function_name']
-            )
+    # find arn for lambda execution role
+    role_name = api_name + function['role']
+    if role_name in list_of_roles:
+        role_arn = list_of_roles[role_name]
+    else:
+        return False, None
 
-        print(function_name)
-        # lambda file
+    print(role_name)
+    # create namespace topic
+    function_name = (
+        api_name
+        + '_'
+        + function['function_name']
+        )
 
-        print("getting code from github")
-        success, function_code = github.get_zipfile(
-            function['lambda_zip_file'],
-            github_info['repo'], 
-            github_info['owner']
-            )
-        if not success:
-            return False, None
-        print("got code")
+    print(function_name)
+    # lambda file
 
-        print("creating function")
-        function_arn = aws.create_function(
-            function_name,
-            function['handler'],
-            function['code_language'],
-            role_arn, 
-            function_code, 
-            function['description']
-            )
-        if function_arn == None:
-            return False, None
+    print("getting code from github")
+    success, function_code = github.get_zipfile(
+        function['lambda_zip_file'],
+        github_info['repo'], 
+        github_info['owner']
+        )
+    if not success:
+        return False, None
+    print("got code")
 
-        # add permission to lambda so sns can notify the function
-        success = aws.add_sns_permission(function_arn)
-        if not success:
-            return False, None
+    print("creating function")
+    function_arn = aws.create_function(
+        function_name,
+        function['handler'],
+        function['code_language'],
+        role_arn, 
+        function_code, 
+        function['description']
+        )
+    if function_arn == None:
+        return False, None
 
-        # add triggers if any
-        if 'triggers' in function:
-            for trigger in function['triggers']:
-                topic_arn = aws.subscribe_to_sns_topic(
-                    api_name + '_' + trigger['topic_name'],
-                    function_arn
-                    )
-                if topic_arn == None:
-                    return False, None
+    # add permission to lambda so sns can notify the function
+    success = aws.add_sns_permission(function_arn)
+    if not success:
+        return False, None
+
+    # add triggers if any
+    if 'triggers' in function:
+        for trigger in function['triggers']:
+            topic_arn = aws.subscribe_to_sns_topic(
+                api_name + '_' + trigger['topic_name'],
+                function_arn
+                )
+            if topic_arn == None:
+                return False, None
                     
     return True, {'arn' : topic_arn }
 
@@ -190,7 +189,7 @@ def install_aws_services(cfg, api_name, github):
 
     if 'lambda' in services_to_install:
         success, function_name = install_lambda_services(
-            cfg['aws_services']['lambda']['functions'],
+            cfg['aws_services']['lambda'],
             api_name,
             github
             )
