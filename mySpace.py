@@ -147,7 +147,7 @@ def install_lambda_services(lambda_functions, api_name, github_info):
         if 'triggers' in function:
             for trigger in function['triggers']:
                 topic_arn = aws.subscribe_to_sns_topic(
-                    api+name + '_' + trigger['topic_name'],
+                    api_name + '_' + trigger['topic_name'],
                     function_arn
                     )
                 if topic_arn == None:
