@@ -220,19 +220,23 @@ def service_POST_request(event, api_name):
     service_info = {}
     # reject requests with the incorrect payload
     if len(event.keys()) != 5:
+        print('wrong number of elements in payload')
         raise Exception('Server')
     # collect information from payload
     if 'service_name' in event:
         service['name'] = event['service_name']
     else:
+        print('no service name in payload')
         raise Exception('Server')
     if 'github_service_repo_owner' in event:
         service['owner'] = event['github_service_repo_owner']
     else:
+        print('no repo owner in payload')
         raise Exception('Server')
     if 'github_service_repo' in event:
         service['repo'] = event['github_service_repo']
     else:
+        print('no repo name in payload')
         raise Exception('Server')
 
     # get files from repo
@@ -245,6 +249,7 @@ def service_POST_request(event, api_name):
     if success:
         cfg = json.loads(service_cfg)
     else:
+        print('unable to get configuration file from github')
         raise Exception('Server')
 
     # API file
@@ -256,11 +261,13 @@ def service_POST_request(event, api_name):
     if success:
         api = json.loads(service_api)
     else:
+        print('unable to get api file from github')
         raise Exception('Server')
 
 
     success, service_info =  install_aws_services(cfg, api_name, service)
     if not success:
+        print('unable to install services')
         raise Exception('Server')
     
     return service_info
