@@ -94,7 +94,7 @@ def install_dynamodb_services(tables, api_name):
     return True, table_arn_list
 
 
-""" install_lambda_services() installs one or more lambda functions to process
+""" install_lambda_services() installs one lambda function to process
 the needs of the service being installed.
 parameters: 
 returns: 
