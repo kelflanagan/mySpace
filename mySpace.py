@@ -248,7 +248,7 @@ def install_service_api(api, cfg, function_arn, api_name, github):
     # also write api_role_arn into the credentials value
     api_gw_int = 'x-amazon-apigateway-integration'
     for path in api['paths'].keys():
-        for method in path.keys():
+        for method in api['paths'][path].keys():
             print('doing path {} with method {}'.format(path, method))
             api['paths'][path][method][api_gw_int]['uri'] = uri_value
             api['paths'][path][method][api_gw_int]['credentials'] = api_role_arn
