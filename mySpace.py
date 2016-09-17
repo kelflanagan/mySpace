@@ -130,13 +130,15 @@ def install_lambda_services(function, api_name, github_info):
     print("got code")
 
     print("creating function")
+    timeout = 20
     function_arn = aws.create_function(
         function_name,
         function['handler'],
         function['code_language'],
         role_arn, 
         function_code, 
-        function['description']
+        function['description'],
+        timeout
         )
     if function_arn == None:
         return None
