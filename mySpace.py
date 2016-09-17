@@ -14,7 +14,7 @@ import urllib
 input paramter. Each topic is namespaced with the api_name as a prefix.
 If topic exists it is not recreated, but included in return
 parameters: topics, SNS topics to create
-returns: dictionary of SNS topic names and ARNs
+returns: True on success and False on failure
 """
 def install_sns_services(sns_services, api_name):
     topic_list = {}
@@ -31,22 +31,22 @@ def install_sns_services(sns_services, api_name):
         if topic_arn != None:
             topic_list[topic_name] = topic_arn
         else:
-            return False, None
+            return False
     
-    return True, topic_list
+    return True
 
 
 """ install_dynamodb_services() installs database tables and associated items
 parameters: tables (JSON array describing tables and items to be created)
             api_name (to namespace the table)
-returns: list of tables and associated arns created
+returns: True on success and False on failure
 """
 def install_dynamodb_services(tables, api_name):
     table_arn_list = {}
     # get list of tables
     table_list = aws.list_dynamodb_tables()
     if table_list == None:
-        return False, None
+        return False
 
     # iterate through tables to create
     for table in tables:
@@ -64,7 +64,7 @@ def install_dynamodb_services(tables, api_name):
                 table['primary_key']
                 )
             if table_arn == None:
-                return False, None
+                return False
 
             # wait for table to be created
             while aws.get_dynamodb_table_status(table_name) != 'ACTIVE':
@@ -82,22 +82,21 @@ def install_dynamodb_services(tables, api_name):
                     item['item_value']
                     )
                 if not success:
-                    return False, None
+                    return False
         else:
             table_arn = aws.get_dynamodb_table_arn(table_name)
             if table_arn == None:
-                return False, None
+                return False
             
-        # add table to list to return
-        table_arn_list[table_name] = table_arn
-
-    return True, table_arn_list
+    return True
 
 
 """ install_lambda_services() installs one lambda function to process
 the needs of the service being installed.
-parameters: 
-returns: 
+parameters: function (JSON from config file)
+            api_name
+            github_info
+returns: lambda_arn
 """
 def install_lambda_services(function, api_name, github_info):
     list_of_roles = aws.list_roles()
@@ -107,7 +106,7 @@ def install_lambda_services(function, api_name, github_info):
     if role_name in list_of_roles:
         role_arn = list_of_roles[role_name]
     else:
-        return False, None
+        return None
 
     print(role_name)
     # create namespace topic
@@ -127,7 +126,7 @@ def install_lambda_services(function, api_name, github_info):
         github_info['owner']
         )
     if not success:
-        return False, None
+        return None
     print("got code")
 
     print("creating function")
@@ -140,12 +139,12 @@ def install_lambda_services(function, api_name, github_info):
         function['description']
         )
     if function_arn == None:
-        return False, None
+        return None
 
     # add permission to lambda so sns can notify the function
     success = aws.add_sns_permission(function_arn)
     if not success:
-        return False, None
+        return None
 
     # add triggers if any
     if 'triggers' in function:
@@ -155,9 +154,9 @@ def install_lambda_services(function, api_name, github_info):
                 function_arn
                 )
             if topic_arn == None:
-                return False, None
+                return None
                     
-    return True, {'arn' : topic_arn }
+    return function_arn
 
 
 """ install_aws_services() reads through the configuration (cfg) file
@@ -167,36 +166,65 @@ github (a dictionary with github owner and repo information)
 """
 def install_aws_services(cfg, api_name, github):
     if 'aws_services' not in cfg:
-        False, None
+        return None
     services_to_install = cfg['aws_services'].keys()
 
     # perform tasks for each service and deal with lambda function last
     if 'sns' in services_to_install:
-        success, sns_topics = install_sns_services(
+        success = install_sns_services(
             cfg['aws_services']['sns'], 
             api_name
             )
         if not success:
-            return False, None
+            return None
 
     if 'dynamodb' in services_to_install:
-        success, db_list = install_dynamodb_services(
+        success = install_dynamodb_services(
             cfg['aws_services']['dynamodb']['tables'], 
             api_name
             )
         if not success:
-            return False, None
+            return None
 
     if 'lambda' in services_to_install:
-        success, function_name = install_lambda_services(
+        function_arn = install_lambda_services(
             cfg['aws_services']['lambda'],
             api_name,
             github
             )
-        if not success:
-            return False, None
+        if function_arn == None:
+            return None
 
-    return True, function_name
+    return function_arn
+
+
+""" install_service_api() installs resources and connects methods to associated
+lambda function.
+parameters: api (JSON formatted swagger file
+            api_name
+            github (a dictionary with github owner and repo information)
+returns: api_id and None on failure
+"""
+def install_service_api(api, cfg, function_arn, api_name, github):
+    # lame check
+    if 'swagger' not in api:
+        return None
+
+    # determine api_id
+    api_list = list_apis()
+    if api_list == None:
+        return None
+    if api_name not in api_list:
+        return None
+
+    # fix a few things in the definition object
+    api['info']['title'] = cfg['name']
+    
+    new_api_id = aws.put_api(api, api_list[api_name])
+    if new_api_id == None:
+        return None
+
+    return api_id
 
 
 """ service_GET_request() service the http GET method for the root resource
@@ -269,12 +297,17 @@ def service_POST_request(event, api_name):
         raise Exception('Server')
 
 
-    success, service_info =  install_aws_services(cfg, api_name, service)
-    if not success:
+    function_arn = install_aws_services(cfg, api_name, service)
+    if function_arn == None:
         print('unable to install services')
         raise Exception('Server')
+
+    success = install_service_api(api, cfg, function_arn, api_name, service)
+    if not success:
+        print('unable to install API')
+        raise Exception('Server')
     
-    return service_info
+    return function_arn
 
 
 """ mySpace() is installed when a new mySpace is created. It is them used to
