@@ -211,7 +211,7 @@ def install_service_api(api, cfg, function_arn, api_name, github):
         return None
 
     # determine api_id
-    api_list = list_apis()
+    api_list = aws.list_apis()
     if api_list == None:
         return None
     if api_name not in api_list:
