@@ -217,11 +217,49 @@ def install_service_api(api, cfg, function_arn, api_name, github):
     if api_name not in api_list:
         return False
 
+    # get api_role_arn
+    api_role_name = api_name + '_' + 'api_invoke_lambda'
+    role_list = aws.list_roles()
+    if role_list == None:
+        return False
+    if api_role_name not in role_list:
+        return False
+    api_role_arn = role_list[api_role_name]
+
+    # get region from function_arn
+    region = string.split(function_arn, ':')[3]
+
     # fix a few things in the definition object
     api['info']['title'] = api_name
     
+    # things that need to be done
+    # 1. uri fields need to point to the lambda function created above
+    # 2. credentials field needs to point to role identified above
+
+    # form uri value
+    uri_value = (
+        'arn:aws:apigateway:' 
+        + region
+        + ':lambda:path/2015-03-31/functions/'
+        + function_arn
+        + '/invocations'
+        )
+    # write value into api object in the uri location for each method
+    # also write api_role_arn into the credentials value
+    api_gw_int = 'x-amazon-apigateway-integration'
+    for path in api['paths'].keys():
+        for method in path.keys():
+            print('doing path {} with method {}'.format(path, method))
+            api['paths'][path][method][api_gw_int]['uri'] = uri_value
+            api['paths'][path][method][api_gw_int]['credentials'] = api_role_arn
+
     new_api_id = aws.put_api(api, api_list[api_name])
     if new_api_id == None:
+        return False
+
+    # deploy API
+    prod_id = aws.add_api_deployment(api_name, new_api_id)
+    if prod_id == None:
         return False
 
     return True
@@ -295,7 +333,6 @@ def service_POST_request(event, api_name):
     else:
         print('unable to get api file from github')
         raise Exception('Server')
-
 
     function_arn = install_aws_services(cfg, api_name, service)
     if function_arn == None:
