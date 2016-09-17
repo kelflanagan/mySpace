@@ -203,28 +203,28 @@ lambda function.
 parameters: api (JSON formatted swagger file
             api_name
             github (a dictionary with github owner and repo information)
-returns: api_id and None on failure
+returns: True on success and False on failure
 """
 def install_service_api(api, cfg, function_arn, api_name, github):
     # lame check
     if 'swagger' not in api:
-        return None
+        return False
 
     # determine api_id
     api_list = aws.list_apis()
     if api_list == None:
-        return None
+        return False
     if api_name not in api_list:
-        return None
+        return False
 
     # fix a few things in the definition object
-    api['info']['title'] = cfg['name']
+    api['info']['title'] = api_name
     
     new_api_id = aws.put_api(api, api_list[api_name])
     if new_api_id == None:
-        return None
+        return False
 
-    return new_api_id
+    return True
 
 
 """ service_GET_request() service the http GET method for the root resource
