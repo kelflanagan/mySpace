@@ -224,7 +224,7 @@ def install_service_api(api, cfg, function_arn, api_name, github):
     if new_api_id == None:
         return None
 
-    return api_id
+    return new_api_id
 
 
 """ service_GET_request() service the http GET method for the root resource
