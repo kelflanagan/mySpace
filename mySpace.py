@@ -281,7 +281,7 @@ def service_GET_request(api_name):
 
     api = boto3.client('apigateway')
     # get list of resources in associated with API
-    resource_list = list_api_resources(api_id)
+    resource_list = aws.list_api_resources(api_id)
 
     return resource_list
 
