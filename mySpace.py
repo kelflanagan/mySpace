@@ -272,13 +272,18 @@ parameters: event which contains the passed parameters if any.
             api_name
 returns: a list of all installed services
 """
-def service_GET_request(event, api_name):
-    return event
-    obj = {
-        "test" : "we made it new",
-        "next" : "who knows"
-        }
-    return obj
+def service_GET_request(api_name):
+    # get id of api
+    api_list = aws.list_apis()
+    if api_name not in api_list:
+        return None
+    api_id = api_list[api_name]
+
+    api = boto3.client('apigateway')
+    # get list of resources in associated with API
+    resource_list = list_api_resources(api_id)
+
+    return resource_list
 
 
 """ service_POST_request servies the http POST method on the root resource.
@@ -293,23 +298,23 @@ def service_POST_request(event, api_name):
     # reject requests with the incorrect payload
     if len(event.keys()) != 5:
         print('wrong number of elements in payload')
-        raise Exception('Server')
+        return False
     # collect information from payload
     if 'service_name' in event:
         service['name'] = event['service_name']
     else:
-        print('no service name in payload')
-        raise Exception('Server')
+        print('no service_name in payload')
+        return False
     if 'github_service_repo_owner' in event:
         service['owner'] = event['github_service_repo_owner']
     else:
-        print('no repo owner in payload')
-        raise Exception('Server')
+        print('no github_service_repo_owner in payload')
+        return False
     if 'github_service_repo' in event:
         service['repo'] = event['github_service_repo']
     else:
-        print('no repo name in payload')
-        raise Exception('Server')
+        print('no github_service_repo in payload')
+        return False
 
     # get files from repo
     # get service config file
@@ -322,7 +327,7 @@ def service_POST_request(event, api_name):
         cfg = json.loads(service_cfg)
     else:
         print('unable to get configuration file from github')
-        raise Exception('Server')
+        return False
 
     # API file
     success, service_api = github.get_zipfile(
@@ -334,19 +339,19 @@ def service_POST_request(event, api_name):
         api = json.loads(service_api)
     else:
         print('unable to get api file from github')
-        raise Exception('Server')
+        return False
 
     function_arn = install_aws_services(cfg, api_name, service)
     if function_arn == None:
         print('unable to install services')
-        raise Exception('Server')
+        return False
 
     success = install_service_api(api, cfg, function_arn, api_name, service)
     if not success:
         print('unable to install API')
-        raise Exception('Server')
+        return False
     
-    return function_arn
+    return True
 
 
 """ mySpace() is installed when a new mySpace is created. It is them used to
@@ -357,9 +362,12 @@ def mySpace(event, context):
     if 'resource_path' in event:
         if event['resource_path'] == '/':
             if event['http_method'] == 'GET':
-                return service_GET_request(event, context.function_name)
+                return service_GET_request(context.function_name)
             elif event['http_method'] == 'POST':
-                return service_POST_request(event, context.function_name)
+                if service_POST_request(event, context.function_name):
+                    return
+                else:
+                    raise Exception('Server')
             else:
                 raise Exception('MethodNotAllowed')
         else:
