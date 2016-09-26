@@ -204,10 +204,9 @@ def install_aws_services(cfg, api_name, github):
 lambda function.
 parameters: api (JSON formatted swagger file
             api_name
-            github (a dictionary with github owner and repo information)
 returns: True on success and False on failure
 """
-def install_service_api(api, cfg, function_arn, api_name, github):
+def install_service_api(api, function_arn, api_name):
     # lame check
     if 'swagger' not in api:
         return False
@@ -346,7 +345,7 @@ def service_POST_request(event, api_name):
         print('unable to install services')
         return False
 
-    success = install_service_api(api, cfg, function_arn, api_name, service)
+    success = install_service_api(api, function_arn, api_name, service)
     if not success:
         print('unable to install API')
         return False
