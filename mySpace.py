@@ -143,11 +143,6 @@ def install_lambda_services(function, api_name, github_info):
     if function_arn == None:
         return None
 
-    # add permission to lambda so sns can notify the function
-    success = aws.add_sns_permission(function_arn)
-    if not success:
-        return None
-
     # add triggers if any
     if 'triggers' in function:
         for trigger in function['triggers']:
