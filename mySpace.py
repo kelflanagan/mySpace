@@ -345,7 +345,7 @@ def service_POST_request(event, api_name):
         print('unable to install services')
         return False
 
-    success = install_service_api(api, function_arn, api_name, service)
+    success = install_service_api(api, function_arn, api_name)
     if not success:
         print('unable to install API')
         return False
