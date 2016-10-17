@@ -146,12 +146,16 @@ def install_lambda_services(function, api_name, github_info):
     # add triggers if any
     if 'triggers' in function:
         for trigger in function['triggers']:
-            topic_arn = aws.subscribe_to_sns_topic(
-                api_name + '_' + trigger['topic_name'],
-                function_arn
-                )
-            if topic_arn == None:
-                return None
+            if trigger['source'] == 'sns':
+                topic_arn = aws.subscribe_to_sns_topic(
+                    api_name + '_' + trigger['name'],
+                    function_arn
+                    )
+                if topic_arn == None:
+                    return None
+            elif trigger['source'] == 'scheduled':
+                # add working code here
+                print 'hello'
                     
     return function_arn
 
