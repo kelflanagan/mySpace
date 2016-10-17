@@ -6,6 +6,27 @@ import time
 import util
 
 
+""" schedule_lambda() creates a scheduled rule and then connects it to the
+specified lambda function. This regularly invokes the lambda function.
+parameters: rule_name - string, name of the rule being created
+            rate - integer, indicating the number of minutes between invocations
+            function_arn, string, the ARN of the lambda function to invoke
+returns: True on success and False on failure
+"""
+def schedule_lambda(rule_name, rate, function_arn):
+    event = boto3.client('events')
+    try:
+        event.put_rule(
+            Name = rule_name,
+            ScheduleExpression = 'rate(' + str(rate) + ' minutes)'
+            )
+    except botocore.exceptions.ClientError as e:
+        print "schedule_lambda(): %s" % e
+        return False
+    return True
+    
+
+
 """ sns_publish() publishes a mesaage and subject to the topic arn
 paramters: topic_arn - string
            message - string
