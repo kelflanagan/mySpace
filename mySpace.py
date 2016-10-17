@@ -154,8 +154,8 @@ def install_lambda_services(function, api_name, github_info):
                 if topic_arn == None:
                     return None
             elif trigger['source'] == 'scheduled':
+                print('add real code here')
                 # add working code here
-                print 'hello'
                     
     return function_arn
 
